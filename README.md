@@ -1,46 +1,36 @@
 # Service Catalog Audit
 
-<p align="center">
-  <img src="assets/readme-cover.svg" alt="Service Catalog Audit cover" width="100%" />
-</p>
+| | |
+| --- | --- |
+| Focus | service catalog health |
+| Command | `service-catalog-audit` |
+| Inputs | text, JSON, JSONL, or CSV |
+| Output | Markdown or JSON |
 
-![stack](https://img.shields.io/badge/stack-Python-7c3aed?style=flat-square) ![python](https://img.shields.io/badge/python-3.11-0891b2?style=flat-square) ![license](https://img.shields.io/badge/license-MIT-b45309?style=flat-square) ![ci](https://img.shields.io/badge/ci-GitHub%20Actions-be185d?style=flat-square)
+![Service Catalog Audit cover](assets/readme-cover.svg)
 
-Audit service catalog entries for ownership, tier, runbook, and dependency gaps.
+Audit service catalog entries for ownership, tier, runbook, and dependency gaps. In practice it is a narrow guardrail for deployment, cloud, CI, config, and operational safety checks: one command, a concrete report, and very little ceremony.
 
-## The short version
+## Policy surface
 
-`service-catalog-audit` is intentionally small: feed it a file, get deterministic findings, and decide whether the result should block a merge or just guide cleanup.
-
-## Rule surface
-
-| Rule | Severity | What it catches |
+| Rule | Level | Why it matters |
 | --- | --- | --- |
 | `unknown-owner` | high | service owner is missing |
 | `missing-tier` | medium | service tier is missing |
 | `missing-runbook` | low | service runbook is missing |
 
-## Usage
+## Local run
 
 ```bash
+git clone https://github.com/mertefekurt/service-catalog-audit.git
+cd service-catalog-audit
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -e ".[dev]"
 service-catalog-audit examples/sample.txt
-service-catalog-audit examples/sample.txt --json --fail-on medium
+service-catalog-audit examples/sample.txt --json
 ```
 
-## Useful defaults
+## Why the sample fails
 
-| Option | Reason |
-| --- | --- |
-| `--json` | machine-readable output for scripts |
-| `--fail-on medium` | stricter CI gate when warnings matter |
-| `--format auto` | let the reader detect text, CSV, JSON, or JSONL |
-
-## Local checks
-
-```bash
-python -m pip install -e ".[dev]"
-ruff check .
-pytest
-python -m service_catalog_audit --help
-```
+`` is intentionally shaped to hit the rules above, so it is useful as a quick smoke test after edits.
