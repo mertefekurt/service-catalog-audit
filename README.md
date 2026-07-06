@@ -1,36 +1,29 @@
 # Service Catalog Audit
 
-| | |
+| Detail | Value |
 | --- | --- |
-| Focus | service catalog health |
-| Command | `service-catalog-audit` |
-| Inputs | text, JSON, JSONL, or CSV |
-| Output | Markdown or JSON |
+| Area | delivery |
+| Entry | `service-catalog-audit` |
+| Input | plain text |
+| Output | terminal findings, optional JSON |
+
+## Decision points
+
+- `unknown-owner` - service owner is missing (high); Assign an accountable owning team..
+- `missing-tier` - service tier is missing (medium); Declare criticality tier for operations..
+- `missing-runbook` - service runbook is missing (low); Attach a runbook for incident response..
 
 ![Service Catalog Audit cover](assets/readme-cover.svg)
 
-Audit service catalog entries for ownership, tier, runbook, and dependency gaps. In practice it is a narrow guardrail for deployment, cloud, CI, config, and operational safety checks: one command, a concrete report, and very little ceremony.
+## Review path
 
-## Policy surface
+![Workflow diagram](assets/readme-diagram.svg)
 
-| Rule | Level | Why it matters |
-| --- | --- | --- |
-| `unknown-owner` | high | service owner is missing |
-| `missing-tier` | medium | service tier is missing |
-| `missing-runbook` | low | service runbook is missing |
-
-## Local run
+## Local check
 
 ```bash
 git clone https://github.com/mertefekurt/service-catalog-audit.git
 cd service-catalog-audit
-python -m venv .venv
-source .venv/bin/activate
 python -m pip install -e ".[dev]"
 service-catalog-audit examples/sample.txt
-service-catalog-audit examples/sample.txt --json
 ```
-
-## Why the sample fails
-
-`` is intentionally shaped to hit the rules above, so it is useful as a quick smoke test after edits.
