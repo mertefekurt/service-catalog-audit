@@ -1,71 +1,46 @@
-# service-catalog-audit
+# Service Catalog Audit
 
-`service-catalog-audit` is a small local CLI that audit service catalog entries for ownership, tier, runbook, and dependency gaps.
+<p align="center">
+  <img src="assets/readme-cover.svg" alt="Service Catalog Audit cover" width="100%" />
+</p>
 
-## Why it is useful
+![stack](https://img.shields.io/badge/stack-Python-7c3aed?style=flat-square) ![python](https://img.shields.io/badge/python-3.11-0891b2?style=flat-square) ![license](https://img.shields.io/badge/license-MIT-b45309?style=flat-square) ![ci](https://img.shields.io/badge/ci-GitHub%20Actions-be185d?style=flat-square)
 
-Service catalogs decay quickly unless metadata is enforced. This CLI checks catalog exports for fields responders and platform teams need.
+Audit service catalog entries for ownership, tier, runbook, and dependency gaps.
 
-## Key features
+## The short version
 
-- reads text, JSON, JSONL, or CSV inputs
-- returns Markdown or JSON reports
-- supports severity-based CI exit codes
-- keeps all checks deterministic and offline
-- includes focused rules for this project:
-- `unknown-owner`: service owner is missing
-- `missing-tier`: service tier is missing
-- `missing-runbook`: service runbook is missing
+`service-catalog-audit` is intentionally small: feed it a file, get deterministic findings, and decide whether the result should block a merge or just guide cleanup.
 
-## Installation
+## Rule surface
 
-```bash
-python -m pip install -e ".[dev]"
-```
+| Rule | Severity | What it catches |
+| --- | --- | --- |
+| `unknown-owner` | high | service owner is missing |
+| `missing-tier` | medium | service tier is missing |
+| `missing-runbook` | low | service runbook is missing |
 
 ## Usage
 
 ```bash
+python -m pip install -e ".[dev]"
 service-catalog-audit examples/sample.txt
-service-catalog-audit examples/sample.txt --json
-service-catalog-audit path/to/input.txt --fail-on medium --out report.md
-python -m service_catalog_audit --help
+service-catalog-audit examples/sample.txt --json --fail-on medium
 ```
 
-Example input:
+## Useful defaults
 
-```text
-service checkout owner: unknown tier: missing runbook: none dependency payments
-```
+| Option | Reason |
+| --- | --- |
+| `--json` | machine-readable output for scripts |
+| `--fail-on medium` | stricter CI gate when warnings matter |
+| `--format auto` | let the reader detect text, CSV, JSON, or JSONL |
 
-## CLI options
-
-```text
-service-catalog-audit INPUT [--format auto|text|jsonl|csv|json] [--json]
-             [--fail-on low|medium|high] [--out PATH]
-```
-
-`INPUT` is any service catalog CSV, JSONL, or text. The tool exits with code `2` when findings meet the selected
-threshold, which makes it easy to use in GitHub Actions or release checks.
-
-## Workflow
-
-```mermaid
-flowchart LR
-    A[input file] --> B[format reader]
-    B --> C[project-specific rules]
-    C --> D[risk score]
-    D --> E[Markdown or JSON report]
-```
-
-## Tests
+## Local checks
 
 ```bash
+python -m pip install -e ".[dev]"
 ruff check .
 pytest
 python -m service_catalog_audit --help
 ```
-
-## License
-
-MIT
